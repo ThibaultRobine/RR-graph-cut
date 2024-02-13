@@ -16,8 +16,231 @@ using namespace std;
 // using namespace Imagine;
 using namespace std;
 
-typedef unsigned char* byteImage;
-// typedef Image<double> doubleImage;
+//typedef unsigned char* byteImage;
+//typedef float* doubleImage;
+
+class FloatImage {
+private:
+    float* data;
+    int nx;
+    int ny;
+
+public:
+    // Constructor with deep copy
+    FloatImage(const float* data_, int nx_, int ny_) : nx(nx_), ny(ny_) {
+        // Allocate memory for the copy
+        data = new float[nx * ny];
+
+        // Perform a deep copy of the data
+        std::copy(data_, data_ + nx * ny, data);
+    }
+    // Constructor with deep copy
+    FloatImage( int nx_, int ny_) : nx(nx_), ny(ny_) {
+        // Allocate memory for the copy
+        data = new float[nx * ny];
+    }
+
+    // Destructor
+    ~FloatImage() {
+        // Deallocate the owned memory
+        delete[] data;
+    }
+
+    // Copy constructor (optional but recommended for copy semantics)
+    FloatImage(const FloatImage& other) : nx(other.nx), ny(other.ny) {
+        // Allocate memory for the copy
+        data = new float[nx * ny];
+
+        // Perform a deep copy of the data
+        std::copy(other.data, other.data + nx * ny, data);
+    }
+
+    // Copy assignment operator (optional but recommended for copy semantics)
+    FloatImage& operator=(const FloatImage& other) {
+        if (this != &other) { // Self-assignment check
+            // Deallocate existing memory
+            delete[] data;
+
+            // Copy dimensions
+            nx = other.nx;
+            ny = other.ny;
+
+            // Allocate memory for the copy
+            data = new float[nx * ny];
+
+            // Perform a deep copy of the data
+            std::copy(other.data, other.data + nx * ny, data);
+        }
+        return *this;
+    }
+
+    // Getter for data
+    float* getData() const {
+        return data;
+    }
+
+    // Getter for nx
+    int width() const {
+        return nx;
+    }
+
+    // Getter for ny
+    int height() const {
+        return ny;
+    }
+
+    // Access pixel at (x, y) for reading using operator()
+    float operator()(int x, int y) const {
+        if (x >= 0 && x < nx && y >= 0 && y < ny) {
+            // Assuming row-major storage (you might need to adjust for your specific layout)
+            return data[y * nx + x];
+        }
+        else {
+            // Handle out-of-bounds access gracefully (you might throw an exception or return a default value)
+            std::cerr << "Error: Pixel coordinates out of bounds\n";
+            return 0;
+        }
+    }
+
+    // Access pixel at (x, y) for writing using operator()
+    float& operator()(int x, int y) {
+        if (x >= 0 && x < nx && y >= 0 && y < ny) {
+            // Assuming row-major storage (you might need to adjust for your specific layout)
+            return data[y * nx + x];
+        }
+        else {
+            // Handle out-of-bounds access gracefully (you might throw an exception or return a default reference)
+            std::cerr << "Error: Pixel coordinates out of bounds\n";
+            // Returning a reference to the first element as a default
+            return data[0];
+        }
+    }
+
+    // Compute the mean value of pixels
+    float mean() const {
+        float sum = 0.0f;
+        for (int i = 0; i < nx * ny; ++i) {
+            sum += data[i];
+        }
+        return sum / (nx * ny);
+    }
+
+    // Example member function
+    void printInfo() const {
+        std::cout << "FloatImage Information:\n";
+        std::cout << "Width: " << nx << "\n";
+        std::cout << "Height: " << ny << "\n";
+    }
+};
+
+class ByteImage {
+private:
+    unsigned char* data;
+    int nx;
+    int ny;
+
+public:
+    // Constructor with deep copy
+    ByteImage(const unsigned char* data_, int nx_, int ny_) : nx(nx_), ny(ny_) {
+        // Allocate memory for the copy
+        data = new unsigned char[nx * ny];
+
+        // Perform a deep copy of the data
+        std::copy(data_, data_ + nx * ny, data);
+    }
+
+    // Destructor
+    ~ByteImage() {
+        // Deallocate the owned memory
+        delete[] data;
+    }
+
+    // Copy constructor (optional but recommended for copy semantics)
+    ByteImage(const ByteImage& other) : nx(other.nx), ny(other.ny) {
+        // Allocate memory for the copy
+        data = new unsigned char[nx * ny];
+
+        // Perform a deep copy of the data
+        std::copy(other.data, other.data + nx * ny, data);
+    }
+
+    // Copy assignment operator (optional but recommended for copy semantics)
+    ByteImage& operator=(const ByteImage& other) {
+        if (this != &other) { // Self-assignment check
+            // Deallocate existing memory
+            delete[] data;
+
+            // Copy dimensions
+            nx = other.nx;
+            ny = other.ny;
+
+            // Allocate memory for the copy
+            data = new unsigned char[nx * ny];
+
+            // Perform a deep copy of the data
+            std::copy(other.data, other.data + nx * ny, data);
+        }
+        return *this;
+    }
+
+    // Getter for data
+    unsigned char* getData() const {
+        return data;
+    }
+
+    // Getter for nx
+    int width() const {
+        return nx;
+    }
+
+    // Getter for ny
+    int height() const {
+        return ny;
+    }
+
+    // Access pixel at (x, y) for reading using operator()
+    unsigned char operator()(int x, int y) const {
+        if (x >= 0 && x < nx && y >= 0 && y < ny) {
+            // Assuming row-major storage (you might need to adjust for your specific layout)
+            return data[y * nx + x];
+        }
+        else {
+            // Handle out-of-bounds access gracefully (you might throw an exception or return a default value)
+            std::cerr << "Error: Pixel coordinates out of bounds\n";
+            return 0;
+        }
+    }
+
+    // Access pixel at (x, y) for writing using operator()
+    unsigned char& operator()(int x, int y) {
+        if (x >= 0 && x < nx && y >= 0 && y < ny) {
+            // Assuming row-major storage (you might need to adjust for your specific layout)
+            return data[y * nx + x];
+        }
+        else {
+            // Handle out-of-bounds access gracefully (you might throw an exception or return a default reference)
+            std::cerr << "Error: Pixel coordinates out of bounds\n";
+            // Returning a reference to the first element as a default
+            return data[0];
+        }
+    }
+
+    //// Compute the mean value of pixels
+    //float mean() const {
+    //    float sum = 0.0f;
+    //    for (int i = 0; i < nx * ny; ++i) {
+    //        sum += static_cast<float>(data[i]);
+    //    }
+    //    return sum / (nx * ny);
+    //}
+
+    // Example member function
+    void printInfo() const {
+        std::cout << "ByteImage Information:\n";
+        std::cout << "Width: " << nx << "\n";
+        std::cout << "Height: " << ny << "\n";
+    }
+};
 
 // Default data
 const char* DEF_im1 = "C:/Users/aejog/source/repos/RR-GraphCut/face0.png", * DEF_im2 = "C:/Users/aejog/source/repos/RR-GraphCut/face1.png";
@@ -143,31 +366,31 @@ void control3D(const Mesh& Mt, const Mesh& Mg) {
 //#endif
 //}
 
-//// Return image of mean intensity value over (2win+1)x(2win+1) patch
-//doubleImage meanImage(const byteImage& I) {
-//    int w = I.width(), h = I.height();
-//    doubleImage IM(w, h);
-//    double area = (2 * win + 1) * (2 * win + 1);
-//    for (int j = 0; j < h; j++)
-//        for (int i = 0; i < w; i++) {
-//            if (j - win < 0 || j + win >= h || i - win < 0 || i + win >= w) {
-//                IM(i, j) = 0;
-//                continue;
-//            }
-//            double sum = 0;
-//            for (int y = -win; y <= win; y++)
-//                for (int x = -win; x <= win; x++)
-//                    sum += I(x + i, y + j);
-//            IM(i, j) = sum / area;
-//        }
-//    return IM;
-//}
+// Return image of mean intensity value over (2win+1)x(2win+1) patch
+FloatImage meanImage(const ByteImage& I) {
+    int w = I.width(), h = I.height();
+    FloatImage IM(w, h);
+    double area = (2 * win + 1) * (2 * win + 1);
+    for (int j = 0; j < h; j++)
+        for (int i = 0; i < w; i++) {
+            if (j - win < 0 || j + win >= h || i - win < 0 || i + win >= w) {
+                IM(i, j) = 0;
+                continue;
+            }
+            double sum = 0;
+            for (int y = -win; y <= win; y++)
+                for (int x = -win; x <= win; x++)
+                    sum += I(x + i, y + j);
+            IM(i, j) = sum / area;
+        }
+    return IM;
+}
 
 // Compute correlation between two pixels in images 1 and 2
-double correl(const byteImage& I1,    // Image 1
-    const doubleImage& I1M, // Image of mean value over patch
-    const byteImage& I2,    // Image2
-    const doubleImage& I2M, // Image of mean value over patch
+double correl(const ByteImage& I1,    // Image 1
+    const FloatImage& I1M, // Image of mean value over patch
+    const ByteImage& I2,    // Image2
+    const FloatImage& I2M, // Image of mean value over patch
     int u1, int v1,         // Pixel of interest in image 1
     int u2, int v2) {       // Pixel of interest in image 2
     double c = 0;
@@ -178,10 +401,10 @@ double correl(const byteImage& I1,    // Image 1
 }
 
 // Compute ZNCC between two patches in images 1 and 2
-double zncc(const byteImage& I1,    // Image 1
-    const doubleImage& I1M, // Image of mean intensity value over patch
-    const byteImage& I2,    // Image2
-    const doubleImage& I2M, // Image of mean intensity value over patch
+double zncc(const ByteImage& I1,    // Image 1
+    const FloatImage& I1M, // Image of mean intensity value over patch
+    const ByteImage& I2,    // Image2
+    const FloatImage& I2M, // Image of mean intensity value over patch
     int u1, int v1,         // Pixel of interest in image 1
     int u2, int v2) {       // Pixel of interest in image 2
     double var1 = correl(I1, I1M, I1, I1M, u1, v1, u1, v1);
@@ -210,12 +433,12 @@ double rho(double x) {
 /// each direction. Put correct weights to the edges, such as 0, INF, or
 /// an intermediate weight.
 void build_graph(Graph<int, int, int>& G,
-    const byteImage& I1, const byteImage& I2,
+    const ByteImage& I1, const ByteImage& I2,
     int nx, int ny, int nd) {
     const int K = 1 + (nd - 1) * 3 * lambda;
     const int INF = 1000000; // "Infinite" value for edge impossible to cut
     // Precompute images of mean intensity value over patch
-    doubleImage I1M = meanImage(I1), I2M = meanImage(I2);
+    FloatImage I1M = meanImage(I1), I2M = meanImage(I2);
     const int w2 = I2.width();
 
     G.add_node(nx * ny * nd);
@@ -254,8 +477,8 @@ void build_graph(Graph<int, int, int>& G,
 }
 
 /// Extract disparity from minimum cut
-doubleImage decode_graph(Graph<int, int, int>& G, int nx, int ny, int nd, int w2) {
-    doubleImage D(nx, ny);
+FloatImage decode_graph(Graph<int, int, int>& G, int nx, int ny, int nd, int w2) {
+    FloatImage D(nx, ny);
     for (int y = 0; y < ny; y++)
         for (int x = 0; x < nx; x++) {
             int u = win + x * zoom;
@@ -287,21 +510,32 @@ int main(int argc, char* argv[]) {
         im1 = argv[1]; im2 = argv[2]; dmin = stoi(argv[3]); dmax = stoi(argv[4]);
     }
     cout << "Loading images... " << flush;
-    byteImage I1, I2;
-    if (!load(I1, im1) || !load(I2, im2)) {
+    size_t size_x, size_y, size_c = 3;
+    unsigned char* data_i1 = io_png_read_u8_gray("C:/Users/aejog/source/repos/RR-GraphCut/face0.png", &size_x, &size_y);
+    if (data_i1 == NULL) { printf("Error cant read u8"); return -1; }
+    
+    ByteImage I1(data_i1, size_x, size_y);
+    delete[] data_i1;
+
+    unsigned char* data_i2 = io_png_read_u8_gray("C:/Users/aejog/source/repos/RR-GraphCut/face1.png", &size_x, &size_y);
+    if (data_i2 == NULL) { printf("Error cant read f32"); return -1; }
+   
+    ByteImage I2(data_i2, size_x, size_y);
+    delete [] data_i2;
+    /*if (!load(I1, im1) || !load(I2, im2)) {
         cerr << "Error loading image files" << endl;
         return 1;
-    }
+    }*/
     cout << "done" << endl;
 
     cout << "Parameters: " << "d=" << dmin << "..." << dmax
         << ", win=" << win << ", lambda=" << lambdaf << ", sigma=" << sigma
         << ", zoom=" << zoom << endl;
 
-    cout << "Displaying images... " << flush;
+    //cout << "Displaying images... " << flush;
     int w1 = I1.width(), w2 = I2.width(), h = I1.height();
-    openWindow(w1 + w2, h);
-    display(I1); display(I2, w1, 0);
+   /* openWindow(w1 + w2, h);
+    display(I1); display(I2, w1, 0);*/
     cout << "done" << endl;
 
     // Zoomed image dim, disregarding borders (strips of width the patch radius)
@@ -318,21 +552,23 @@ int main(int argc, char* argv[]) {
     cout << "done" << endl << "  max flow = " << f << endl;
 
     cout << "Extracting disparity map from minimum cut... " << flush;
-    doubleImage D = decode_graph(G, nx, ny, nd, I2.width());
+    FloatImage D = decode_graph(G, nx, ny, nd, I2.width());
     cout << "done" << endl;
-
-    cout << "Displaying disparity map... " << flush;
+    int write_success = io_png_write_f32("C:/Users/aejog/source/repos/RR-GraphCut/output.png", D.getData(), nx, ny, 1);
+    
+    if (write_success != 0) { printf("Error cant write"); return -1; }
+    /*cout << "Displaying disparity map... " << flush;
     fillRect(0, 0, w1, h, CYAN);
     display(enlarge(displayDisp(D), zoom), win, win);
     cout << "done" << endl;
     cout << "Click to compute and display blurred disparity map... " << flush;
     click();
     D = blur(D, sigma);
-    display(enlarge(displayDisp(D), zoom), win, win);
+    display(enlarge(displayDisp(D), zoom), win, win);*/
     cout << "done" << endl;
 
-    show3D(I1.getSubImage(win, win, w1 - 2 * win, h - 2 * win), D, zoom);
-    endGraphics();
+    //show3D(I1.getSubImage(win, win, w1 - 2 * win, h - 2 * win), D, zoom);
+    //endGraphics();
     return 0;
 }
 

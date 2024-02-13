@@ -15,7 +15,7 @@ find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (RR-GraphCut "RR-GraphCut.cpp" "RR-GraphCut.h" "io_png.c" "io_png.h" )
+add_executable (RR-GraphCut "RR-GraphCut.cpp" "RR-GraphCut.h" "io_png.c" "io_png.h" "maxflow/graph.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET RR-GraphCut PROPERTY CXX_STANDARD 20)
